@@ -140,7 +140,7 @@ document.addEventListener('keyup', (event) => {
 
     if (event.code == 'ShiftLeft') {
         // KeyboardKeysOnBoardShift.forEach( el => el.classList.toggle('hidden') )
-        console.log('YPAAAAAAA')
+        console.log('YPAAAAAAAAAAAAAAAA')
         KeyboardKeysOnBoardSmall.forEach( el => el.classList.remove('hidden') )
         KeyboardKeysOnBoardShift.forEach( el => el.classList.add('hidden') )
     }
