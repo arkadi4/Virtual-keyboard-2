@@ -3,12 +3,19 @@ console.log('YPA')
 
 let keyboardKeysEnglish = [
     [ {keycode: 'Backquote', char: '\`', shift: '\~', alternative: '\~'},
-    {keycode: 'Numpad1', char: '1', shift: '!'},
-    {keycode: 'Numpad2', char: '2', shift: '@'},
-    {keycode: 'Numpad3', char: '3', shift: '#'},
-    {keycode: 'Numpad4', char: '4', shift: '$'},
-    {keycode: 'Numpad5', char: '5', shift: '%'},
-    {keycode: 'Numpad6', char: '6', shift: '^'} ],
+    {keycode: 'Digit1', char: '1', shift: '!'},
+    {keycode: 'Digit2', char: '2', shift: '@'},
+    {keycode: 'Digit3', char: '3', shift: '#'},
+    {keycode: 'Digit4', char: '4', shift: '$'},
+    {keycode: 'Digit5', char: '5', shift: '%'},
+    {keycode: 'Digit6', char: '6', shift: '^'}, 
+    {keycode: 'Digit7', char: '7', shift: '&'}, 
+    {keycode: 'Digit8', char: '8', shift: '*'}, 
+    {keycode: 'Digit9', char: '9', shift: '('}, 
+    {keycode: 'Digit0', char: '0', shift: ')'}, 
+    {keycode: 'Minus', char: '-', shift: '_'}, 
+    {keycode: 'Equal', char: '=', shift: '+'}, 
+    {keycode: 'Backspace', char: '-< Backspace', shift: '-< Backspace'}, ],
     [ {keycode: 'ShiftLeft', char: 'Shift', shift: 'Shift'},
     {keycode: 'KeyQ', char: 'q', shift: 'Q'},
     {keycode: 'KeyW', char: 'w', shift: 'W'},
@@ -16,6 +23,13 @@ let keyboardKeysEnglish = [
     {keycode: 'KeyR', char: 'r', shift: 'R'},
     {keycode: 'KeyT', char: 't', shift: 'T'},
     {keycode: 'KeyY', char: 'y', shift: 'Y'} ],
+    [ {keycode: 'ShiftLeft', char: 'Shift', shift: 'Shift'},
+    {keycode: 'KeyA', char: 'a', shift: 'A'},
+    {keycode: 'KeyS', char: 's', shift: 'S'},
+    {keycode: 'KeyD', char: 'd', shift: 'D'},
+    {keycode: 'KeyF', char: 'f', shift: 'F'},
+    {keycode: 'KeyG', char: 'g', shift: 'G'},
+    {keycode: 'KeyH', char: 'h', shift: 'H'} ],
 ]
 
 let keyboardKeysRussian = [
@@ -27,21 +41,21 @@ let keyboardKeysRussian = [
     {keycode: 'Numpad5', char: '5', shift: '%'},
     {keycode: 'Numpad6', char: '6', shift: ':'} ],
     [ {keycode: 'ShiftLeft', char: 'Shift', shift: 'Shift'},
-    {keycode: 'KeyQ', char: 'й', shift: 'Q'},
-    {keycode: 'KeyW', char: 'w', shift: 'W'},
-    {keycode: 'KeyE', char: 'e', shift: 'E'},
-    {keycode: 'KeyR', char: 'r', shift: 'R'},
-    {keycode: 'KeyT', char: 't', shift: 'T'},
-    {keycode: 'KeyY', char: 'y', shift: 'Y'} ],
+    {keycode: 'KeyQ', char: 'й', shift: 'Й'},
+    {keycode: 'KeyW', char: 'ц', shift: 'Ц'},
+    {keycode: 'KeyE', char: 'у', shift: 'У'},
+    {keycode: 'KeyR', char: 'к', shift: 'К'},
+    {keycode: 'KeyT', char: 'е', shift: 'Е'},
+    {keycode: 'KeyY', char: 'н', shift: 'Н'} ],
 ]
 
 let keyboardKeys = keyboardKeysEnglish
 
 const title = document.createElement('h1')
 title.textContent = 'Virtual keyboard'
-const KeyBoardBlock = document.createElement('div')
+let KeyBoardBlock = document.createElement('div')
 KeyBoardBlock.className = 'keyboard__block'
-let RowOfKeydoard = ''
+let rowOfKeyboard = ''
 
 document.body.prepend(title, KeyBoardBlock)
 
@@ -56,111 +70,94 @@ const createKeyDiv = (obj) => {
     bigDiv.className = 'key__shift'
     bigDiv.classList.add('hidden')
     temporaryDiv.dataset.keyToCompare = obj.keycode
-    RowOfKeydoard.append(temporaryDiv)
-    // document.body.append(temporaryDiv)
+    rowOfKeyboard.append(temporaryDiv)
     temporaryDiv.append(smallDiv)
     temporaryDiv.append(bigDiv)
 }
 
 
-keyboardKeys.forEach(row => {
-    RowOfKeydoard = document.createElement('div')
-    RowOfKeydoard.className = 'RowOfKeydoard'
-    KeyBoardBlock.append(RowOfKeydoard)
-    //bigDiv.classList.add('hidden')
-    row.forEach(element => {
-        createKeyDiv(element)
+const createKeyboard = () => {
+    KeyBoardBlock.innerHTML = ''
+    keyboardKeys.forEach(row => {
+        rowOfKeyboard = document.createElement('div')
+        rowOfKeyboard.className = 'rowOfKeyboard'
+        KeyBoardBlock.append(rowOfKeyboard)
+        row.forEach(element => {
+            createKeyDiv(element)
+        })
     })
-    //RowOfKeydoard.append()
-})
+}
+createKeyboard()
 
-const KeyboardKeysOnBoard = document.querySelectorAll('.key__block')
-const KeyboardKeysOnBoardSmall = document.querySelectorAll('.key__small')
-const KeyboardKeysOnBoardShift = document.querySelectorAll('.key__shift')
+let KeyboardKeysOnBoard = document.querySelectorAll('.key__block')
 
-let pressedKeys = new Set()
+let KeyboardKeysOnBoardSmall = document.querySelectorAll('.key__small')
+let KeyboardKeysOnBoardShift = document.querySelectorAll('.key__shift')
 
-
-document.addEventListener('keydown', (event) => {
-    console.log(event.code)
-    pressedKeys.add(event.code)
-    //for (pressed in pressedKeys)
-    // if (pressedKeys.has('AltLeft' && "ShiftLeft")) {
-    //     alert("AAAAAAAAAAAAAAAAAAA")
-    //     return;
-    // }
-
-    let codes = ['AltLeft' , 'ShiftLeft']
-
-    for (let code of codes) { // все ли клавиши из набора нажаты?
-        console.log('code', code)
-        console.log('pressedKeys', pressedKeys)
-        if (!pressedKeys.has(code)) {
-            console.log('!pressedKeys.has(code)', !pressedKeys.has(code))
-            return console.log('pressedKeysReturn', pressedKeys);
-        }
-        //alert("AAAAAAAAAAAAAAAAAAA")
-    }
-    pressedKeys.clear();
-    alert("AAAAAAAAAAAAAAAAAAA")
-    // if(event.code in pressedKeys) return;
-    // pressedKeys[event.code] = true;
-
-
-    console.log('pressedKeys', pressedKeys)
-    if (event.code == 'AltLeft' && event.code == 'ShiftLeft'  ) {
-        // KeyboardKeysOnBoardShift.forEach( el => el.classList.toggle('hidden') )
-        console.log('Alt-----------------------------------------')
-        keyboardKeys = keyboardKeysRussian
-
-    }
-    if (event.code == 'ShiftLeft') {
-        // KeyboardKeysOnBoardShift.forEach( el => el.classList.toggle('hidden') )
-        console.log('ShiftLeft pushed')
-        KeyboardKeysOnBoardSmall.forEach( el => el.classList.add('hidden') )
-        KeyboardKeysOnBoardShift.forEach( el => el.classList.remove('hidden') )
-    }
-    KeyboardKeysOnBoard.forEach(element => {
-        if (event.code == element.dataset.keyToCompare) {
-            console.log('YPAAAAAAA')
-            element.classList.add('colored')
-        }
+const paintKeyOnKeydown = () => {
+    document.addEventListener('keydown', (event) => {
+        KeyboardKeysOnBoard = document.querySelectorAll('.key__block')
+        KeyboardKeysOnBoard.forEach(element => {
+            // console.log('event.code', event.code)
+            // console.log('element.dataset.keyToCompare', element.dataset.keyToCompare)
+            if (event.code == element.dataset.keyToCompare) {
+                element.classList.add('colored')
+            }
+        })
     })
-    // if (event.code == 'KeyQ') {
-    //     keyboardkey.classList.toggle('colored')
-    // }
-})
+    document.addEventListener('keyup', (event) => {
+        KeyboardKeysOnBoard = document.querySelectorAll('.key__block')
+        KeyboardKeysOnBoard.forEach(element => {
+            if (event.code == element.dataset.keyToCompare) {
+                element.classList.remove('colored')
+            }
+        })
+    })
+}
+paintKeyOnKeydown()
 
 
 document.addEventListener('keyup', (event) => {
-    // console.log("YPA 5555555555 times")
-    // console.log(event.code)
-    pressedKeys.delete(event.code)
-
-
     if (event.code == 'ShiftLeft') {
-        // KeyboardKeysOnBoardShift.forEach( el => el.classList.toggle('hidden') )
-        console.log('YPAAAAAAAAAAAAAAAA')
         KeyboardKeysOnBoardSmall.forEach( el => el.classList.remove('hidden') )
         KeyboardKeysOnBoardShift.forEach( el => el.classList.add('hidden') )
     }
-    KeyboardKeysOnBoard.forEach(element => {
-        if (event.code == element.dataset.keyToCompare) {
-            console.log('YPAAAAAAA')
-            element.classList.remove('colored')
-        }
-    })
 })
 
-// let keyboardkey = document.createElement('div')
-// keyboardkey.textContent = 'Key q'
-// keyboardkey.className = 'key__block'
-// keyboardkey.dataset.keyToCompare = 'XXX'
-// keyboardkey.dataset.keyToCompare = 'PPPPPPPPP'
+function runOnKeys(func, ...codes) {
+    let pressed = new Set();
+    document.addEventListener('keydown', function(event) {
+      pressed.add(event.code);
+      for (let code of codes) { 
+        if (!pressed.has(code)) {
+          return;
+        }
+      }
+      pressed.clear();
+      func();
+    });
+    document.addEventListener('keyup', function(event) {
+      pressed.delete(event.code);
+    });
+}
 
-// document.body.prepend(title, keyboardkey)
+const changeLanguage = () => {
+    if (keyboardKeys == keyboardKeysEnglish) {
+        keyboardKeys = keyboardKeysRussian
+        createKeyboard()
+    } else {
+        keyboardKeys = keyboardKeysEnglish
+        createKeyboard()
+    }
+}
 
-// keyboardkey.addEventListener('keydown', () => {
-//     console.log("YPA 2 times")
-// })
+runOnKeys( () => changeLanguage(), "ShiftLeft",  "AltLeft");
 
+const shiftPushed = () => {
+        console.log('ShiftLeft pushed')
+        KeyboardKeysOnBoardSmall = document.querySelectorAll('.key__small')
+        KeyboardKeysOnBoardShift = document.querySelectorAll('.key__shift')
+        KeyboardKeysOnBoardSmall.forEach( el => el.classList.add('hidden') )
+        KeyboardKeysOnBoardShift.forEach( el => el.classList.remove('hidden') )
+}
+runOnKeys( () => shiftPushed(), "ShiftLeft");
