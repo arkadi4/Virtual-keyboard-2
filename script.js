@@ -1,53 +1,7 @@
 console.log('YPA')
 
+import {keyboardKeysEnglish, keyboardKeysRussian} from './keyboardRows.js'
 
-let keyboardKeysEnglish = [
-    [ {keycode: 'Backquote', char: '\`', shift: '\~', alternative: '\~'},
-    {keycode: 'Digit1', char: '1', shift: '!'},
-    {keycode: 'Digit2', char: '2', shift: '@'},
-    {keycode: 'Digit3', char: '3', shift: '#'},
-    {keycode: 'Digit4', char: '4', shift: '$'},
-    {keycode: 'Digit5', char: '5', shift: '%'},
-    {keycode: 'Digit6', char: '6', shift: '^'}, 
-    {keycode: 'Digit7', char: '7', shift: '&'}, 
-    {keycode: 'Digit8', char: '8', shift: '*'}, 
-    {keycode: 'Digit9', char: '9', shift: '('}, 
-    {keycode: 'Digit0', char: '0', shift: ')'}, 
-    {keycode: 'Minus', char: '-', shift: '_'}, 
-    {keycode: 'Equal', char: '=', shift: '+'}, 
-    {keycode: 'Backspace', char: '-< Backspace', shift: '-< Backspace'}, ],
-    [ {keycode: 'ShiftLeft', char: 'Shift', shift: 'Shift'},
-    {keycode: 'KeyQ', char: 'q', shift: 'Q'},
-    {keycode: 'KeyW', char: 'w', shift: 'W'},
-    {keycode: 'KeyE', char: 'e', shift: 'E'},
-    {keycode: 'KeyR', char: 'r', shift: 'R'},
-    {keycode: 'KeyT', char: 't', shift: 'T'},
-    {keycode: 'KeyY', char: 'y', shift: 'Y'} ],
-    [ {keycode: 'ShiftLeft', char: 'Shift', shift: 'Shift'},
-    {keycode: 'KeyA', char: 'a', shift: 'A'},
-    {keycode: 'KeyS', char: 's', shift: 'S'},
-    {keycode: 'KeyD', char: 'd', shift: 'D'},
-    {keycode: 'KeyF', char: 'f', shift: 'F'},
-    {keycode: 'KeyG', char: 'g', shift: 'G'},
-    {keycode: 'KeyH', char: 'h', shift: 'H'} ],
-]
-
-let keyboardKeysRussian = [
-    [ {keycode: 'Backquote', char: 'ё', shift: 'Ё', alternative: '\~'},
-    {keycode: 'Numpad1', char: '1', shift: '!'},
-    {keycode: 'Numpad2', char: '2', shift: '\"'},
-    {keycode: 'Numpad3', char: '3', shift: '№'},
-    {keycode: 'Numpad4', char: '4', shift: ';'},
-    {keycode: 'Numpad5', char: '5', shift: '%'},
-    {keycode: 'Numpad6', char: '6', shift: ':'} ],
-    [ {keycode: 'ShiftLeft', char: 'Shift', shift: 'Shift'},
-    {keycode: 'KeyQ', char: 'й', shift: 'Й'},
-    {keycode: 'KeyW', char: 'ц', shift: 'Ц'},
-    {keycode: 'KeyE', char: 'у', shift: 'У'},
-    {keycode: 'KeyR', char: 'к', shift: 'К'},
-    {keycode: 'KeyT', char: 'е', shift: 'Е'},
-    {keycode: 'KeyY', char: 'н', shift: 'Н'} ],
-]
 
 let keyboardKeys = keyboardKeysEnglish
 
@@ -55,9 +9,11 @@ const title = document.createElement('h1')
 title.textContent = 'Virtual keyboard'
 let KeyBoardBlock = document.createElement('div')
 KeyBoardBlock.className = 'keyboard__block'
+let areaForText = document.createElement('textarea')
+areaForText.className = 'areaForText'
 let rowOfKeyboard = ''
 
-document.body.prepend(title, KeyBoardBlock)
+document.body.prepend(title, areaForText, KeyBoardBlock)
 
 const createKeyDiv = (obj) => {
     let temporaryDiv = document.createElement('div')
@@ -78,9 +34,10 @@ const createKeyDiv = (obj) => {
 
 const createKeyboard = () => {
     KeyBoardBlock.innerHTML = ''
-    keyboardKeys.forEach(row => {
+    keyboardKeys.forEach( (row, index) => {
         rowOfKeyboard = document.createElement('div')
         rowOfKeyboard.className = 'rowOfKeyboard'
+        rowOfKeyboard.dataset.rowNumber = index
         KeyBoardBlock.append(rowOfKeyboard)
         row.forEach(element => {
             createKeyDiv(element)
@@ -97,11 +54,18 @@ let KeyboardKeysOnBoardShift = document.querySelectorAll('.key__shift')
 const paintKeyOnKeydown = () => {
     document.addEventListener('keydown', (event) => {
         KeyboardKeysOnBoard = document.querySelectorAll('.key__block')
+        // areaForText.textContent = areaForText.textContent + `${event.target.textContent}`
         KeyboardKeysOnBoard.forEach(element => {
             // console.log('event.code', event.code)
             // console.log('element.dataset.keyToCompare', element.dataset.keyToCompare)
             if (event.code == element.dataset.keyToCompare) {
                 element.classList.add('colored')
+                if (event.shiftKey) {
+                    areaForText.textContent += `${element.lastChild.textContent}`
+                } else {
+                    areaForText.textContent += `${element.firstChild.textContent}`
+                }
+                
             }
         })
     })
@@ -116,13 +80,26 @@ const paintKeyOnKeydown = () => {
 }
 paintKeyOnKeydown()
 
-
-document.addEventListener('keyup', (event) => {
-    if (event.code == 'ShiftLeft') {
+document.addEventListener('keydown', (event) => {
+    if (event.shiftKey) {
         KeyboardKeysOnBoardSmall.forEach( el => el.classList.remove('hidden') )
         KeyboardKeysOnBoardShift.forEach( el => el.classList.add('hidden') )
     }
 })
+
+document.addEventListener('keyup', (event) => {
+    if (event.shiftKey) {
+        KeyboardKeysOnBoardSmall.forEach( el => el.classList.add('hidden') )
+        KeyboardKeysOnBoardShift.forEach( el => el.classList.remove('hidden') )
+    }
+})
+
+// document.addEventListener('keyup', (event) => {
+//     if (event.code == 'ShiftLeft') {
+//         KeyboardKeysOnBoardSmall.forEach( el => el.classList.remove('hidden') )
+//         KeyboardKeysOnBoardShift.forEach( el => el.classList.add('hidden') )
+//     }
+// })
 
 function runOnKeys(func, ...codes) {
     let pressed = new Set();
@@ -145,15 +122,18 @@ const changeLanguage = () => {
     if (keyboardKeys == keyboardKeysEnglish) {
         keyboardKeys = keyboardKeysRussian
         createKeyboard()
+        printOnClickInTextarea()
     } else {
         keyboardKeys = keyboardKeysEnglish
         createKeyboard()
+        printOnClickInTextarea()
     }
 }
 
 runOnKeys( () => changeLanguage(), "ShiftLeft",  "AltLeft");
 
 const shiftPushed = () => {
+
         console.log('ShiftLeft pushed')
         KeyboardKeysOnBoardSmall = document.querySelectorAll('.key__small')
         KeyboardKeysOnBoardShift = document.querySelectorAll('.key__shift')
@@ -161,3 +141,17 @@ const shiftPushed = () => {
         KeyboardKeysOnBoardShift.forEach( el => el.classList.remove('hidden') )
 }
 runOnKeys( () => shiftPushed(), "ShiftLeft");
+
+// let KeysOnKeyboard = document.querySelectorAll('.key__block')
+
+let printOnClickInTextarea = () => {
+    KeyboardKeysOnBoard = document.querySelectorAll('.key__block')
+    KeyboardKeysOnBoard.forEach(keyOnBoard => {
+        keyOnBoard.addEventListener('click', (event) => {
+            // console.log('event.target', event.target)
+            areaForText.textContent = areaForText.textContent + `${event.target.textContent}`
+            
+        })
+    })
+} 
+printOnClickInTextarea()
